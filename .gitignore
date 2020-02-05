@@ -1,0 +1,6 @@
+/.idea/.gitignore
+/.idea/
+/Core.iml
+/target/
+/src/test/
+/src/main/resources/application.yml
