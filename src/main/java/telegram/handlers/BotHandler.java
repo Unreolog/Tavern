@@ -11,7 +11,6 @@ import telegram.Application;
 import telegram.GoBot;
 import telegram.domain.Location;
 import telegram.domain.Player;
-import telegram.domain.RealLocation;
 import telegram.domain.repository.LocationRepository;
 
 import java.util.ArrayList;
