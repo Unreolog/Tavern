@@ -19,30 +19,23 @@ import java.util.List;
 
 
 public class BotHandler extends TelegramLongPollingBot {
+
 	LocationRepository locationRepository = GoBot.context.getBean(LocationRepository.class);
 	List<Location> locationList = locationRepository.findAll();
 	private String botName = Application.getBotName();
 	private String botToken = Application.getBotToken();
-	private Player mike = null;
+	private Player player = null;
 	private boolean isReady = false;
-	private HashMap<String, RealLocation> locationsMap = new HashMap<>();
+	private HashMap<String, Location> locationsMap = new HashMap<>();
 
 
 	// loading locations with relationships
 	private void init() {
 		for (Location location : locationList) {
-			locationsMap.put(location.getName(), new RealLocation(
-					location.getId(),
-					location.getName(),
-					location.getCommand(),
-					locationRepository.findFirstById(location.getNorthNeighbor()),
-					locationRepository.findFirstById(location.getSouthNeighbor()),
-					locationRepository.findFirstById(location.getWestNeighbor()),
-					locationRepository.findFirstById(location.getEastNeighbor())
-			));
+			locationsMap.put(location.getName(), location);
 		}
 
-		mike = new Player(1, "Mike", locationsMap.get("\uD83C\uDF7B Трактир"));   // a player for testing
+		player = new Player(1, "Mike", locationsMap.get("\uD83C\uDF7B Трактир"));   // a player for testing
 		isReady = true;
 	}
 
@@ -55,7 +48,7 @@ public class BotHandler extends TelegramLongPollingBot {
 			try {
 
 				if (!isReady) { init(); }           // loading locations, create test player
-				goTravel(message, mike);            // move player
+				goTravel(message, player);            // move player
 
 			} catch (Exception e) {
 				sendMessage.setText("Что-то не так");
@@ -88,19 +81,22 @@ public class BotHandler extends TelegramLongPollingBot {
 		ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
 		List<KeyboardRow> keyboard = new ArrayList<>();
 		KeyboardRow row = new KeyboardRow();
-		row.add(locationsMap.get(mike.getLocation().getNorthNeighbor().getName()).getWestNeighbor().getName());
-		row.add(mike.getLocation().getNorthNeighbor().getName());
-		row.add(locationsMap.get(mike.getLocation().getEastNeighbor().getName()).getNorthNeighbor().getName());
+
+		row.add(player.getLocation().getNeighbours().getNorthNeighbor().getNeighbours().getWestNeighbor().getName());
+		row.add(player.getLocation().getNeighbours().getNorthNeighbor().getName());
+		row.add(player.getLocation().getNeighbours().getEastNeighbor().getNeighbours().getNorthNeighbor().getName());
 		keyboard.add(row);
+
 		row = new KeyboardRow();
-		row.add(mike.getLocation().getWestNeighbor().getName());
-		row.add(mike.getLocation().getName());
-		row.add(mike.getLocation().getEastNeighbor().getName());
+		row.add(player.getLocation().getNeighbours().getWestNeighbor().getName());
+		row.add(player.getLocation().getName());
+		row.add(player.getLocation().getNeighbours().getEastNeighbor().getName());
 		keyboard.add(row);
+
 		row = new KeyboardRow();
-		row.add(locationsMap.get(mike.getLocation().getSouthNeighbor().getName()).getWestNeighbor().getName());
-		row.add(mike.getLocation().getSouthNeighbor().getName());
-		row.add(locationsMap.get(mike.getLocation().getEastNeighbor().getName()).getSouthNeighbor().getName());
+		row.add(player.getLocation().getNeighbours().getSouthNeighbor().getNeighbours().getWestNeighbor().getName());
+		row.add(player.getLocation().getNeighbours().getSouthNeighbor().getName());
+		row.add(player.getLocation().getNeighbours().getEastNeighbor().getNeighbours().getSouthNeighbor().getName());
 		keyboard.add(row);
 
 		keyboardMarkup.setKeyboard(keyboard);

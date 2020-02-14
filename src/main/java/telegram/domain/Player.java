@@ -13,12 +13,12 @@ import java.util.HashMap;
 public class Player {
 	private int id;
 	private String name;
-	private RealLocation location;
+	private Location location;
 
-	public Player(int id, String name, RealLocation realLocation) {
+	public Player(int id, String name, Location location) {
 		this.id = id;
 		this.name = name;
-		this.location = realLocation;
+		this.location = location;
 	}
 
 	@Override
@@ -31,7 +31,7 @@ public class Player {
 	}
 
 
-	public String movePlayer(HashMap<String, RealLocation> locationsMap, String command, Player mike) {
+	public String movePlayer(HashMap<String, Location> locationsMap, String command, Player mike) {
 		if (locationsMap.containsKey(command) &&
 				!(command.equals("\uD83C\uDF0A Море")) &&
 				!(command.equals("\uD83D\uDC83 Бордель")) &&
@@ -42,10 +42,10 @@ public class Player {
 				return "Ты уже в этой локации";
 			}
 
-			if (this.getLocation().getNorthNeighbor().getName().equals(command) ||
-					this.getLocation().getSouthNeighbor().getName().equals(command) ||
-					this.getLocation().getWestNeighbor().getName().equals(command) ||
-					this.getLocation().getEastNeighbor().getName().equals(command)) {
+			if (this.getLocation().getNeighbours().getNorthNeighbor().getName().equals(command) ||
+					this.getLocation().getNeighbours().getSouthNeighbor().getName().equals(command) ||
+					this.getLocation().getNeighbours().getWestNeighbor().getName().equals(command) ||
+					this.getLocation().getNeighbours().getEastNeighbor().getName().equals(command)) {
 				this.setLocation(locationsMap.get(command));
 				System.out.println("\nКрасава, умеешь читать!\n");
 				return "Теперь ты здесь: " + mike.getLocation().getName();
